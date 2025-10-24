@@ -3,4 +3,4 @@ pandas
 scipy
 gspread
 oauth2client
-git+https://github.com/twopirllc/pandas-ta.git
+pandas-ta
