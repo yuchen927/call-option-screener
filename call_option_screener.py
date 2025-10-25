@@ -29,10 +29,10 @@ def upload_to_google_sheets(dataframe, sheet_name="Options_Investment"):
 
 # === Get S&P 500 List === #
 def get_sp500_tickers():
-    url = 'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
-    table = pd.read_html(url)
-    df = table[0]
-    return [ticker.replace('.', '-') for ticker in df['Symbol'].tolist()]
+    # 替代方案：從公開 GitHub CSV 清單取得 S&P500 成分股
+    url = "https://raw.githubusercontent.com/datasets/s-and-p-500-companies/master/data/constituents.csv"
+    df = pd.read_csv(url)
+    return df['Symbol'].tolist()
 
 # === Get Top 100 Volume Tickers === #
 def get_top_volume_tickers(limit=100):
