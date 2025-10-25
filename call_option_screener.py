@@ -1,4 +1,5 @@
 import yfinance as yf
+from yahoo_fin import stock_info as si
 import pandas as pd
 import pandas_ta as ta
 from datetime import datetime
@@ -29,31 +30,10 @@ def upload_to_google_sheets(dataframe, sheet_name="Options_Investment"):
 
 # === Get S&P 500 List === #
 def get_sp500_tickers():
-    url = "https://raw.githubusercontent.com/datasets/s-and-p-500-companies/master/data/constituents.csv"
-    df = pd.read_csv(url)
-    return df['Symbol'].tolist()
-
-def fix_ticker_format(ticker):
-    return ticker.replace('.', '-')
-
-def get_top_volume_tickers(limit=100):
-    tickers = get_sp500_tickers()
-    tickers = [fix_ticker_format(tk) for tk in tickers]
-
-    volume_data = {}
-    for ticker in tickers:
-        try:
-            data = yf.Ticker(ticker).history(period="1d")
-            if not data.empty:
-                volume_data[ticker] = data['Volume'].iloc[-1]
-        except:
-            continue
-
-    # 排序成 DataFrame 再篩選前N名
-    volume_df = pd.DataFrame(list(volume_data.items()), columns=["Ticker", "Volume"])
-    volume_df = volume_df.sort_values(by="Volume", ascending=False)
-
-    return volume_df["Ticker"].head(limit).tolist()
+    tickers = si.tickers_sp500()
+    # 修正 "." -> "-"（e.g. BRK.B → BRK-B）
+    tickers = [tk.replace('.', '-') for tk in tickers]
+    return tickers
 
 
 # === Get Top 100 Volume Tickers === #
