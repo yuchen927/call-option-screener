@@ -8,6 +8,7 @@ from scipy.stats import norm
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import warnings
+import requests as json
 
 warnings.filterwarnings("ignore")
 
@@ -30,10 +31,17 @@ def upload_to_google_sheets(dataframe, sheet_name="Options_Investment"):
 
 # === Get S&P 500 List === #
 def get_sp500_tickers():
-    tickers = si.tickers_sp500()
-    # 修正 "." -> "-"（e.g. BRK.B → BRK-B）
-    tickers = [tk.replace('.', '-') for tk in tickers]
-    return tickers
+    try:
+        url = "https://api.nasdaq.com/api/quote/list-type/sp500"
+        headers = {"User-Agent": "Mozilla/5.0"}
+        r = requests.get(url, headers=headers, timeout=10)
+        df = pd.DataFrame(r.json()['data']['rows'])
+        tickers = [s.replace('.', '-') for s in df['symbol']]
+        return tickers
+    except Exception:
+        print("⚠️ Nasdaq API blocked. Using static fallback.")
+        with open("sp500_static.json", "r") as f:
+            return json.load(f)
 
 
 # === Get Top 100 Volume Tickers === #
