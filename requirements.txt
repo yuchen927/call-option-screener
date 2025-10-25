@@ -6,3 +6,4 @@ oauth2client
 pandas-ta
 lxml
 yahoo_fin
+requests_html
