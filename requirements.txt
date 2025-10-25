@@ -5,3 +5,4 @@ gspread
 oauth2client
 pandas-ta
 lxml
+yahoo_fin
